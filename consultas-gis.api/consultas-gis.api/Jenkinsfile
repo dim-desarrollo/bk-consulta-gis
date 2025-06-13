@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent any  // Jenkins puede ejecutar este pipeline en cualquier agente disponible
 
     environment {
         PROJECT_NAME = "TuProyecto.WebApi"
@@ -14,12 +14,27 @@ pipeline {
     }
 
     stages {
+
+        // Etapa 1: Clona el repositorio desde GitHub
+      /*
         stage('Checkout') {
             steps {
+                // Verifica la conexión con el repo y hace pull del código fuente
                 git 'https://github.com/usuario/repositorio.git'
             }
         }
+        */
+        // Etapa 2: Mensaje de confirmación
+        stage('Echo conexión') {
+            steps {
+                // Solo imprime un mensaje para confirmar que el pipeline llegó hasta aquí
+                echo "✅ Jenkins se conectó correctamente al repositorio y ejecutó la etapa inicial."
+            }
+        }
 
+        // Las siguientes etapas están comentadas por ahora, hasta que confirmes que el repo funciona correctamente
+
+        /*
         stage('Build .NET App') {
             steps {
                 sh 'dotnet restore'
@@ -74,5 +89,7 @@ pipeline {
                 }
             }
         }
+        */
+
     }
 }
