@@ -1,0 +1,78 @@
+pipeline {
+    agent any
+
+    environment {
+        PROJECT_NAME = "TuProyecto.WebApi"
+        IMAGE_NAME = "usuariodocker/tuapi"
+        IMAGE_TAG = "latest"
+        DOCKER_CREDENTIALS_ID = "dockerhub-credentials"
+
+        CONTAINER_NAME = "api-webapi"
+        HOST_PORT = "5050"
+        CONTAINER_PORT = "8080"
+        NETWORK_NAME = "mi_red"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/usuario/repositorio.git'
+            }
+        }
+
+        stage('Build .NET App') {
+            steps {
+                sh 'dotnet restore'
+                sh 'dotnet publish -c Release -o out'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'dotnet test'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: "${DOCKER_CREDENTIALS_ID}",
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                    '''
+                }
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    def containerExists = sh(script: "docker ps -aqf name=${CONTAINER_NAME}", returnStdout: true).trim()
+                    if (containerExists) {
+                        echo "Contenedor existente encontrado. Deteniendo y eliminando..."
+                        sh "docker stop ${CONTAINER_NAME}"
+                        sh "docker rm ${CONTAINER_NAME}"
+                    }
+
+                    sh """
+                        docker run -d \
+                            --name ${CONTAINER_NAME} \
+                            --network ${NETWORK_NAME} \
+                            -p ${HOST_PORT}:${CONTAINER_PORT} \
+                            ${IMAGE_NAME}:${IMAGE_TAG}
+                    """
+                }
+            }
+        }
+    }
+}
