@@ -1,0 +1,6 @@
+@consultas_gis.api_HostAddress = http://localhost:5298
+
+GET {{consultas_gis.api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
