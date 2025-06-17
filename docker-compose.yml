@@ -12,5 +12,5 @@ services:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
 
 networks:
-  jenking:
+  prueba-deploy-net-rapido:
     driver: bridge
