@@ -6,11 +6,17 @@ pipeline {
     }
 
     stages {
+        // stage('Run docker compose') {
+        //     steps {
+        //         dir("${CARPETA_APLICACION}") {
+        //             sh 'docker-compose up -d'
+        //         }
+        //     }
+        // }
+
         stage('Run docker compose') {
             steps {
-                dir("${CARPETA_APLICACION}") {
-                    sh 'docker-compose up -d'
-                }
+                echo "hola desde github"
             }
         }
 
