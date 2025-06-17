@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        CARPETA_APLICACION = './'
+        CARPETA_APLICACION = './consultas-gis.api/consultas-gis.api'
         ASPNETCORE_ENVIRONMENT = 'Development'
     }
 
