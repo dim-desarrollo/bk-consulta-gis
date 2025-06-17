@@ -2,12 +2,12 @@ version: "3"
 services:
   app-net-api:
     build: ./
-    container_name: deploy-rapidp
+    container_name: deploy-rapido
     restart: always
     ports:
       - "9996:8080"
     networks:
-      - jenking
+      - prueba-deploy-net-rapido
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
 
