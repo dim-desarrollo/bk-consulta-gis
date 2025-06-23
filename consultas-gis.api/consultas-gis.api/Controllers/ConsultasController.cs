@@ -1,5 +1,7 @@
 ﻿using consultas_gis.api.Data;
 using consultas_gis.api.Models;
+using consultas_gis.DTOs;
+using consultas_gis.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,19 +13,14 @@ namespace consultas_gis.api.Controllers
     public class ConsultasController : ControllerBase
     {
 
-        
+        //[Authorize]
         [HttpGet("/consulta")]
-        public ActionResult<Response> ObtenerListado()
+        public ActionResult<List<ConsultaDTO>> ObtenerListado()
         {
             var repo = new Repositorio();
+            
 
-
-            return Ok(new Response
-            {
-                Status = 200,
-                Content = repo.ConsultaPadron()
-
-            });
+            return Ok(Mapper.ConsultaModelToConsultaDTO(repo.ConsultaPadron()));
         }
 
     }

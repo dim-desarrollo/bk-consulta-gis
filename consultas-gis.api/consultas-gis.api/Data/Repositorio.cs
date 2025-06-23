@@ -14,7 +14,7 @@ namespace consultas_gis.api.Data
         {
 
                var sql = @"
-                    SELECT TOP 10 DOCUMENTO, p.APELLIDO_NOMBRE, b.CONCEPTO, CLAVE_BIEN, ANO_CUOTA, NRO_CUOTA, CAPITAL_ITEM,
+                    SELECT top 1000  DOCUMENTO, p.APELLIDO_NOMBRE, b.CONCEPTO, CLAVE_BIEN, ANO_CUOTA, NRO_CUOTA, CAPITAL_ITEM,
                         CASE 
                             WHEN ESTADO_DEUDA = 'PT' THEN 'PAGADO'
                             WHEN ESTADO_DEUDA = 'LI' THEN 'DEUDA' 
@@ -36,7 +36,7 @@ namespace consultas_gis.api.Data
                         )
                         AND DOCUMENTO IS NOT NULL 
                         AND DOCUMENTO <> ''
-                    ORDER BY DOCUMENTO, b.CONCEPTO, CLAVE_BIEN, ANO_CUOTA, NRO_CUOTA";
+                    ORDER BY 1";
 
 
             using var connection = new SqlConnection(connectionString);
