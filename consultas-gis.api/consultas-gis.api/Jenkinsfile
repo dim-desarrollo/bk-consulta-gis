@@ -1,5 +1,6 @@
 pipeline {
     agent any
+
     environment {
         CARPETA_APLICACION = './consultas-gis.api/consultas-gis.api'
         ASPNETCORE_ENVIRONMENT = 'Development'
@@ -12,6 +13,11 @@ pipeline {
             steps {
                 dir("${CARPETA_APLICACION}") {
                     script {
+                        if (!fileExists('VERSION')) {
+                            echo "Archivo VERSION no existe. Creando con versión inicial v1.0"
+                            writeFile file: 'VERSION', text: 'v1.0\n'
+                        }
+
                         def versionFile = readFile('VERSION').trim()
                         def versionParts = versionFile.replace('v', '').tokenize('.')
                         def major = versionParts[0].toInteger()
@@ -20,7 +26,7 @@ pipeline {
                         env.NEW_VERSION = "v${major}.${minor}"
 
                         writeFile file: 'VERSION', text: "${env.NEW_VERSION}\n"
-                        echo "Versión nueva: ${env.NEW_VERSION}"
+                        echo "Nueva versión generada: ${env.NEW_VERSION}"
                     }
                 }
             }
@@ -39,26 +45,43 @@ pipeline {
             }
         }
 
-        stage('Limpiar contenedor anterior') {
+        stage('Eliminar contenedor anterior') {
             steps {
                 sh '''
                     if [ "$(docker ps -aq -f name=${CONTENEDOR})" ]; then
+                        echo "Eliminando contenedor existente: ${CONTENEDOR}"
                         docker stop ${CONTENEDOR} || true
                         docker rm ${CONTENEDOR} || true
+                    else
+                        echo "No existe un contenedor con el nombre ${CONTENEDOR}"
                     fi
                 '''
             }
         }
 
-        stage('Reconstruir imagen y desplegar') {
+        stage('Reconstruir y desplegar') {
             steps {
                 dir("${CARPETA_APLICACION}") {
                     sh '''
+                        echo "Construyendo imagen..."
                         docker-compose build
+
+                        echo "Etiquetando como latest..."
                         docker tag ${IMAGEN} ${IMAGEN}:latest
+
+                        echo "Desplegando contenedor..."
                         docker-compose up -d
                     '''
                 }
+            }
+        }
+
+        stage('Resumen') {
+            steps {
+                echo "Despliegue exitoso"
+                echo "Versión actual de la imagen: ${NEW_VERSION}"
+                echo "Imagen latest: ${IMAGEN}:latest"
+                echo "Contenedor en ejecución: ${CONTENEDOR}"
             }
         }
     }
