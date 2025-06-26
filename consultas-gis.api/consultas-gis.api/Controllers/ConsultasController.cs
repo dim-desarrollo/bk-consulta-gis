@@ -23,5 +23,14 @@ namespace consultas_gis.api.Controllers
             return Ok(Mapper.ConsultaModelToConsultaDTO(repo.ConsultaPadron()));
         }
 
+        [HttpGet("/consulta-prueba")]
+        public ActionResult<string> ObtenerPrueba()
+        {
+            var repo = new Repositorio();
+
+
+            return Ok("franco gay");
+        }
+
     }
 }
