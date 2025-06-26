@@ -13,25 +13,25 @@ namespace consultas_gis.api.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        [HttpPost]
-        public ActionResult<Response> Auth(UserDto user)
-        {
-            if (user.NameUser.Equals("isaias") && user.Password.Equals("$FINO"))
-            {
-                return Ok(new Response
-                {
-                    Status = 200,
-                    Content = $"Token = {CreateToken(user.NameUser)}" 
-            });
-            }
+        //[HttpPost]
+        //public ActionResult<Response> Auth(UserDto user)
+        //{
+        //    if (user.NameUser.Equals("isaias") && user.Password.Equals("$FINO"))
+        //    {
+        //        return Ok(new Response
+        //        {
+        //            Status = 200,
+        //            Content = $"Token = {CreateToken(user.NameUser)}" 
+        //    });
+        //    }
 
-            return BadRequest(new Response
-            {
-                Status = 400,
-                Content = null
-            });
+        //    return BadRequest(new Response
+        //    {
+        //        Status = 400,
+        //        Content = null
+        //    });
 
-        }
+        //}
 
 
         private string CreateToken(string user)
