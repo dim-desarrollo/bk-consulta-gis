@@ -3,24 +3,54 @@ pipeline {
     environment {
         CARPETA_APLICACION = './consultas-gis.api/consultas-gis.api'
         ASPNETCORE_ENVIRONMENT = 'Development'
+        CONTENEDOR = 'deploy-rapido'
+        IMAGEN = 'consultas-gisapi-app-net-api'
     }
 
     stages {
-        stage('Run docker compose') {
+        stage('Retag imagen anterior') {
             steps {
-                dir("${CARPETA_APLICACION}") {
-                    sh 'docker-compose up -d'
-                    
+                script {
+                    def timestamp = new Date().format("yyyyMMdd-HHmm")
+                    env.VERSION_TAG = "${timestamp}"
+
+                    sh """
+                        # Verifica si la imagen 'latest' existe
+                        if docker images | grep -q ${IMAGEN}; then
+                            echo "Retaggeando imagen existente como ${IMAGEN}:${VERSION_TAG}"
+                            docker tag ${IMAGEN}:latest ${IMAGEN}:${VERSION_TAG}
+                        else
+                            echo "No hay imagen existente para retaggear"
+                        fi
+                    """
                 }
-                
             }
         }
 
-        // stage('Run docker compose') {
-        //     steps {
-        //         echo "hola desde github"
-        //     }
-        // }
+        stage('Limpiar contenedor anterior') {
+            steps {
+                sh '''
+                    if [ "$(docker ps -aq -f name=${CONTENEDOR})" ]; then
+                        echo "Eliminando contenedor existente: ${CONTENEDOR}"
+                        docker stop ${CONTENEDOR} || true
+                        docker rm ${CONTENEDOR} || true
+                    else
+                        echo "No existe un contenedor con el nombre ${CONTENEDOR}"
+                    fi
+                '''
+            }
+        }
 
+        stage('Reconstruir imagen y desplegar') {
+            steps {
+                dir("${CARPETA_APLICACION}") {
+                    sh """
+                        docker-compose build
+                        docker tag ${IMAGEN} ${IMAGEN}:latest
+                        docker-compose up -d
+                    """
+                }
+            }
+        }
     }
 }
