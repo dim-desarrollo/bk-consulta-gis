@@ -29,7 +29,7 @@ namespace consultas_gis.api.Controllers
             var repo = new Repositorio();
 
 
-            return Ok("franco gay");
+            return Ok("franco gay 2");
         }
 
     }
