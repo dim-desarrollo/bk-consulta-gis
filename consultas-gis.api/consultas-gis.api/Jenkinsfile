@@ -32,14 +32,14 @@ pipeline {
             }
         }
 
-        stage('Retag imagen anterior') {
+        stage('Retag imagen actual antes de build') {
             steps {
                 sh '''
-                    if docker images | grep -q ${IMAGEN}:latest; then
-                        echo "Retaggeando imagen existente como ${IMAGEN}:${NEW_VERSION}"
+                    if docker images ${IMAGEN}:latest | grep -q ${IMAGEN}; then
+                        echo "Retaggeando imagen 'latest' como '${IMAGEN}:${NEW_VERSION}'"
                         docker tag ${IMAGEN}:latest ${IMAGEN}:${NEW_VERSION}
                     else
-                        echo "No hay imagen 'latest' para retaggear"
+                        echo "No hay imagen ${IMAGEN}:latest para retaggear"
                     fi
                 '''
             }
@@ -66,9 +66,6 @@ pipeline {
                         echo "Construyendo imagen..."
                         docker-compose build
 
-                        echo "Etiquetando como latest..."
-                        docker tag ${IMAGEN} ${IMAGEN}:latest
-
                         echo "Desplegando contenedor..."
                         docker-compose up -d
                     '''
@@ -79,9 +76,8 @@ pipeline {
         stage('Resumen') {
             steps {
                 echo "Despliegue exitoso"
-                echo "Versión actual de la imagen: ${NEW_VERSION}"
-                echo "Imagen latest: ${IMAGEN}:latest"
-                echo "Contenedor en ejecución: ${CONTENEDOR}"
+                echo "Imagen etiquetada como: ${IMAGEN}:latest"
+                echo "Imagen anterior guardada como: ${IMAGEN}:${NEW_VERSION}"
             }
         }
     }
