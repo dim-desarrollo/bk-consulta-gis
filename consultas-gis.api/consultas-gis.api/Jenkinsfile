@@ -8,22 +8,34 @@ pipeline {
     }
 
     stages {
+        stage('Leer y calcular versión') {
+            steps {
+                dir("${CARPETA_APLICACION}") {
+                    script {
+                        def versionFile = readFile('VERSION').trim()
+                        def versionParts = versionFile.replace('v', '').tokenize('.')
+                        def major = versionParts[0].toInteger()
+                        def minor = versionParts[1].toInteger() + 1
+
+                        env.NEW_VERSION = "v${major}.${minor}"
+
+                        writeFile file: 'VERSION', text: "${env.NEW_VERSION}\n"
+                        echo "Versión nueva: ${env.NEW_VERSION}"
+                    }
+                }
+            }
+        }
+
         stage('Retag imagen anterior') {
             steps {
-                script {
-                    def timestamp = new Date().format("yyyyMMdd-HHmm")
-                    env.VERSION_TAG = "${timestamp}"
-
-                    sh """
-                        # Verifica si la imagen 'latest' existe
-                        if docker images | grep -q ${IMAGEN}; then
-                            echo "Retaggeando imagen existente como ${IMAGEN}:${VERSION_TAG}"
-                            docker tag ${IMAGEN}:latest ${IMAGEN}:${VERSION_TAG}
-                        else
-                            echo "No hay imagen existente para retaggear"
-                        fi
-                    """
-                }
+                sh '''
+                    if docker images | grep -q ${IMAGEN}:latest; then
+                        echo "Retaggeando imagen existente como ${IMAGEN}:${NEW_VERSION}"
+                        docker tag ${IMAGEN}:latest ${IMAGEN}:${NEW_VERSION}
+                    else
+                        echo "No hay imagen 'latest' para retaggear"
+                    fi
+                '''
             }
         }
 
@@ -31,11 +43,8 @@ pipeline {
             steps {
                 sh '''
                     if [ "$(docker ps -aq -f name=${CONTENEDOR})" ]; then
-                        echo "Eliminando contenedor existente: ${CONTENEDOR}"
                         docker stop ${CONTENEDOR} || true
                         docker rm ${CONTENEDOR} || true
-                    else
-                        echo "No existe un contenedor con el nombre ${CONTENEDOR}"
                     fi
                 '''
             }
@@ -44,11 +53,11 @@ pipeline {
         stage('Reconstruir imagen y desplegar') {
             steps {
                 dir("${CARPETA_APLICACION}") {
-                    sh """
+                    sh '''
                         docker-compose build
                         docker tag ${IMAGEN} ${IMAGEN}:latest
                         docker-compose up -d
-                    """
+                    '''
                 }
             }
         }
