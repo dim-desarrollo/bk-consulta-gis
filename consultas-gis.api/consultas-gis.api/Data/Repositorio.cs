@@ -14,7 +14,7 @@ namespace consultas_gis.api.Data
         {
 
                var sql = @"
-                    SELECT top 1000  DOCUMENTO, p.APELLIDO_NOMBRE, b.CONCEPTO, CLAVE_BIEN, ANO_CUOTA, NRO_CUOTA, CAPITAL_ITEM,
+                    SELECT DOCUMENTO, p.APELLIDO_NOMBRE, b.CONCEPTO, CLAVE_BIEN, ANO_CUOTA, NRO_CUOTA, CAPITAL_ITEM,
                         CASE 
                             WHEN ESTADO_DEUDA = 'PT' THEN 'PAGADO'
                             WHEN ESTADO_DEUDA = 'LI' THEN 'DEUDA' 
