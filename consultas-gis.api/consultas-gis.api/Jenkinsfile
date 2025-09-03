@@ -64,7 +64,7 @@ pipeline {
             steps {
                 dir("${CARPETA_APLICACION}") {
                     sh '''
-                        docker -v
+                        docker-compose -h
                         echo "Construyendo imagen..."
                         docker-compose build
 
