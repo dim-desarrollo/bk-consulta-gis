@@ -9,12 +9,12 @@ pipeline {
     }
 
     stages {
-        stage('Leer y calcular versión') {
+        stage('Leer y calcular versiï¿½n') {
             steps {
                 dir("${CARPETA_APLICACION}") {
                     script {
                         if (!fileExists('VERSION')) {
-                            echo "Archivo VERSION no existe. Creando con versión inicial v1.0"
+                            echo "Archivo VERSION no existe. Creando con versiï¿½n inicial v1.0"
                             writeFile file: 'VERSION', text: 'v1.0\n'
                         }
 
@@ -26,7 +26,7 @@ pipeline {
                         env.NEW_VERSION = "v${major}.${minor}"
 
                         writeFile file: 'VERSION', text: "${env.NEW_VERSION}\n"
-                        echo "Nueva versión generada: ${env.NEW_VERSION}"
+                        echo "Nueva versiï¿½n generada: ${env.NEW_VERSION}"
                     }
                 }
             }
@@ -67,7 +67,7 @@ pipeline {
                         docker-compose build
 
                         echo "Desplegando contenedor..."
-                        docker-compose up -d
+                        docker compose up -d
                     '''
                 }
             }
