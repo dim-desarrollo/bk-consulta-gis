@@ -64,7 +64,7 @@ pipeline {
                 dir("${CARPETA_APLICACION}") {
                     sh '''
                         echo "Construyendo imagen..."
-                        docker-compose build
+                        docker compose build
 
                         echo "Desplegando contenedor..."
                         docker compose up -d
