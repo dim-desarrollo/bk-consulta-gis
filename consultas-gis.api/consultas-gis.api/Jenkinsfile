@@ -38,6 +38,7 @@ pipeline {
                     if docker images ${IMAGEN}:latest | grep -q ${IMAGEN}; then
                         echo "Retaggeando imagen 'latest' como '${IMAGEN}:${NEW_VERSION}'"
                         docker tag ${IMAGEN}:latest ${IMAGEN}:${NEW_VERSION}
+                        docker ps
                     else
                         echo "No hay imagen ${IMAGEN}:latest para retaggear"
                     fi
