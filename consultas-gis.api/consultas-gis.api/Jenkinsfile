@@ -66,10 +66,10 @@ pipeline {
                     sh '''
                         docker -v
                         echo "Construyendo imagen..."
-                        docker compose build
+                        docker-compose build
 
                         echo "Desplegando contenedor..."
-                        docker compose up -d
+                        docker-compose up -d
                     '''
                 }
             }
