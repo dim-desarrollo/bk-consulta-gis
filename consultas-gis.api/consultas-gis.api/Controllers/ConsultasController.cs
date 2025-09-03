@@ -19,8 +19,10 @@ namespace consultas_gis.api.Controllers
         {
             var repo = new Repositorio();
             
-
-            return Ok(Mapper.ConsultaModelToConsultaDTO(repo.ConsultaPadron()));
+            Console.WriteLine("Consulta realizada");
+            var resu = repo.ConsultaPadron();
+            Console.WriteLine($"La cantidad de rows son {resu.Count}");
+            return Ok(Mapper.ConsultaModelToConsultaDTO(resu));
         }
 
         [HttpGet("/consulta-prueba")]
@@ -29,7 +31,7 @@ namespace consultas_gis.api.Controllers
             var repo = new Repositorio();
 
 
-            return Ok("franco gay 4");
+            return Ok($"ambientes deploy {new DateTime()}");
         }
 
     }
