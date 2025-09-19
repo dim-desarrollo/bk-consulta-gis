@@ -50,7 +50,7 @@ else sum(CAPITAL_ITEM) end as SALDO
                             'OB08CONT','OB03CONT','OB01CONT','CICIRETE'
                         )
                         AND DOCUMENTO IS NOT NULL 
-                        AND DOCUMENTO in ('30623893096','30708757175')
+                        --AND DOCUMENTO in ('30623893096','30708757175')
                         --AND DOCUMENTO <> ''
 group by DOCUMENTO, p.APELLIDO_NOMBRE, b.CONCEPTO, CLAVE_BIEN, ANO_CUOTA, NRO_CUOTA,pb.TIPO_BIEN,f.ESTADO_DEUDA,pb.ID_BIEN
                     ORDER BY DOCUMENTO, b.CONCEPTO, CLAVE_BIEN, ANO_CUOTA, NRO_CUOTA
