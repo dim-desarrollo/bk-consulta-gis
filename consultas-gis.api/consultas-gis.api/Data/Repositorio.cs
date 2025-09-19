@@ -14,7 +14,7 @@ namespace consultas_gis.api.Data
         {
 
                var sql = @"
-                          SELECT top 10 DOCUMENTO, p.APELLIDO_NOMBRE, b.CONCEPTO, CLAVE_BIEN, ANO_CUOTA, NRO_CUOTA
+                          SELECT DOCUMENTO, p.APELLIDO_NOMBRE, b.CONCEPTO, CLAVE_BIEN, ANO_CUOTA, NRO_CUOTA
 ,case when pb.TIPO_BIEN='CICI' then
 sum(case when TIPO_ITEM='CICITEM2' then isnull(CAPITAL_ITEM,0) end)
 -sum(case when TIPO_ITEM='CICIRETE' then isnull(CAPITAL_ITEM,0)*-1 end) 
