@@ -58,7 +58,6 @@ group by DOCUMENTO, p.APELLIDO_NOMBRE, b.CONCEPTO, CLAVE_BIEN, ANO_CUOTA, NRO_CU
 
 
             using var connection = new SqlConnection(connectionString);
-            using var connection = new SqlConnection(connectionString);
                 var consultas = connection.Query<Consulta>(sql,
                 commandTimeout: 240,
                 buffered: false).ToList();
