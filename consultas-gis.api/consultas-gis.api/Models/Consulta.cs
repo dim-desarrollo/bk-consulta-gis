@@ -10,9 +10,10 @@
             public string CLAVE_BIEN { get; set; }
             public int ANO_CUOTA { get; set; }
             public int NRO_CUOTA { get; set; }
-            public decimal CAPITAL_ITEM { get; set; }
+            public decimal SALDO { get; set; }
             public string ESTADO { get; set; }
-        
+            public string CATEGORIA { get; set; }
+            public int MINIMO { get; set; }
 
     }
 }

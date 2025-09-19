@@ -18,8 +18,11 @@ namespace consultas_gis.Utils
                 ClaveBien = x.CLAVE_BIEN.Trim(),
                 AnoCuota = x.ANO_CUOTA,
                 NumeroCuota = x.NRO_CUOTA,
-                CapitalItem = x.CAPITAL_ITEM,
-                Estado = x.ESTADO.Trim()
+                CapitalItem = x.SALDO,
+                Estado = x.ESTADO.Trim(),
+                Categoria = x.CATEGORIA.Trim(),
+                Minimo = x.MINIMO
+                
 
             }).ToList();
 

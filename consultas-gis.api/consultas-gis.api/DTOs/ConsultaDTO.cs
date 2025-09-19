@@ -10,5 +10,7 @@
         public int NumeroCuota { get; set; }
         public decimal CapitalItem { get; set; }
         public string Estado { get; set; }
+        public string Categoria { get; set; }
+        public int Minimo { get; set; }
     }
 }
