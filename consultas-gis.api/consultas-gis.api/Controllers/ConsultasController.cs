@@ -15,14 +15,14 @@ namespace consultas_gis.api.Controllers
 
         //[Authorize]
         [HttpGet("/consulta")]
-        public ActionResult<List<ConsultaDTO>> ObtenerListado()
+        public ActionResult<List<Consulta>> ObtenerListado()
         {
             var repo = new Repositorio();
             
             Console.WriteLine("Consulta realizada");
             var resu = repo.ConsultaPadron();
             Console.WriteLine($"La cantidad de rows son {resu.Count}");
-            return Ok(Mapper.ConsultaModelToConsultaDTO(resu));
+            return Ok(resu);
         }
 
         [HttpGet("/consulta-prueba")]
