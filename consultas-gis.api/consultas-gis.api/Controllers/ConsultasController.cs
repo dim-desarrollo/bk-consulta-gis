@@ -25,6 +25,18 @@ namespace consultas_gis.api.Controllers
             return Ok(resu);
         }
 
+
+        [HttpGet("/consulta-min")]
+        public ActionResult<List<Consulta>> ObtenerListadoMin()
+        {
+            var repo = new Repositorio();
+
+            Console.WriteLine("Consulta realizada");
+            var resu = repo.ConsultaPadronDos();
+            Console.WriteLine($"La cantidad de rows son {resu.Count}");
+            return Ok(resu);
+        }
+
         [HttpGet("/consulta-prueba")]
         public ActionResult<string> ObtenerPrueba()
         {
