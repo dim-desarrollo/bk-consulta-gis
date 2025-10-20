@@ -1,37 +1,37 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace consultas_gis.api.Models
 {
     public class Consulta
     {
-        [JsonPropertyName("NRO_INTERNO")]
+        [JsonPropertyName("nrO_INTERNO")]
         public string NRO_INTERNO { get; set; } = string.Empty;
 
-        [JsonPropertyName("CUIT")]
+        [JsonPropertyName("cuit")]
         public string CUIT { get; set; } = string.Empty;
 
-        [JsonPropertyName("APELLIDO_NOMBRE")]
+        [JsonPropertyName("apellidO_NOMBRE")]
         public string APELLIDO_NOMBRE { get; set; } = string.Empty;
 
-        [JsonPropertyName("CATEGORIA")]
+        [JsonPropertyName("categoria")]
         public string CATEGORIA { get; set; } = string.Empty;
 
-        [JsonPropertyName("ANO_CUOTA")]
+        [JsonPropertyName("anO_CUOTA")]
         public string ANO_CUOTA { get; set; } = string.Empty;
 
-        [JsonPropertyName("NRO_CUOTA")]
+        [JsonPropertyName("nrO_CUOTA")]
         public string NRO_CUOTA { get; set; } = string.Empty;
 
-        [JsonPropertyName("TRIBUTO")]
+        [JsonPropertyName("tributo")]
         public float TRIBUTO { get; set; }
 
-        [JsonPropertyName("RETENCIONES")]
+        [JsonPropertyName("retenciones")]
         public float RETENCIONES { get; set; }
 
-        [JsonPropertyName("ESTADO")]
+        [JsonPropertyName("estado")]
         public string ESTADO { get; set; } = string.Empty;
 
-        [JsonPropertyName("DEUDA")]
+        [JsonPropertyName("deuda")]
         public float DEUDA { get; set; }
     }
 }

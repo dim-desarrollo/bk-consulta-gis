@@ -14,21 +14,24 @@ namespace consultas_gis.api.Data
         {
 
                var sql = @"
-                          SELECT f.NRO_INTERNO,CLAVE_BIEN as CUIT,p.APELLIDO_NOMBRE
-                --,DBO.CICI_CATEGORIA_VIGENTE(pb.ID_BIEN) as CATEGORIA
-                ,case when DBO.CICI_CATEGORIA_VIGENTE(pb.ID_BIEN)='Gran Contribuyente' then 'GC' else DBO.CICI_CATEGORIA_VIGENTE(pb.ID_BIEN) 
-                end as categoria
+                         SELECT f.NRO_INTERNO,CLAVE_BIEN as CUIT,p.APELLIDO_NOMBRE
+                ,case when DBO.CICI_CATEGORIA_VIGENTE(pb.ID_BIEN)='Gran Contribuyente' then 'GC' else DBO.CICI_CATEGORIA_VIGENTE(pb.ID_BIEN) end as CATEGORIA
                 ,f.ANO_CUOTA, f.NRO_CUOTA
-                ,sum(case when TIPO_ITEM='CICITEM2' then CAPITAL_ITEM end) as tributo
-                ,isnull(sum(case when TIPO_ITEM='CICIRETE' then CAPITAL_ITEM*-1 end),0) as Retenciones
+                ,sum(case when TIPO_ITEM='CICITEM2' then CAPITAL_ITEM end) as TRIBUTO
+                ,isnull(sum(case when TIPO_ITEM='CICIRETE' then CAPITAL_ITEM*-1 end),0) as RETENCIONES
                 --else sum(CAPITAL_ITEM) end as SALDO
-                ,CASE 
-                WHEN ESTADO_DEUDA IN ('PT','FP') THEN 'PAGADO'
-                WHEN sum(case when TIPO_ITEM='CICITEM2' then CAPITAL_ITEM end)-isnull(sum(case when TIPO_ITEM='CICIRETE' then CAPITAL_ITEM*-1 end),0)=0 THEN 'SALDADO'
-                WHEN ESTADO_DEUDA = 'LI' THEN 'DEUDA' 
-                WHEN ESTADO_DEUDA = 'FI' THEN 'EN PLAN DE PAGO' 
-                    ELSE ESTADO_DEUDA
+                ,CASE WHEN ESTADO_DEUDA IN ('PT','FP') THEN 'PAGADO'
+	                  WHEN sum(case when TIPO_ITEM='CICITEM2' then CAPITAL_ITEM end)-isnull(sum(case when TIPO_ITEM='CICIRETE' then CAPITAL_ITEM*-1 end),0)=0 THEN 'SALDADO'
+	                  WHEN ESTADO_DEUDA = 'LI' THEN 'DEUDA' 
+	                  WHEN ESTADO_DEUDA = 'FI' THEN 'EN PLAN DE PAGO' 
+                      ELSE ESTADO_DEUDA
                 END AS ESTADO
+                ,CASE WHEN ESTADO_DEUDA IN ('PT','FP') THEN 0
+	                  WHEN sum(case when TIPO_ITEM='CICITEM2' then CAPITAL_ITEM end)-isnull(sum(case when TIPO_ITEM='CICIRETE' then CAPITAL_ITEM*-1 end),0)=0 THEN 0
+	                  WHEN ESTADO_DEUDA = 'LI' THEN sum(case when TIPO_ITEM='CICITEM2' then CAPITAL_ITEM end)-isnull(sum(case when TIPO_ITEM='CICIRETE' then CAPITAL_ITEM*-1 end),0)
+	                  --WHEN ESTADO_DEUDA = 'FI' THEN 0
+                      ELSE 0
+                END AS DEUDA
                 --,cast(FECHA_VENCIMIENTO1 as date) as FEC_VTO
                 FROM RT_FACTURAS f
                 JOIN RT_PADRON_BASE pb ON pb.ID_BIEN = f.ID_BIEN and pb.TIPO_BIEN='CICI'
@@ -43,7 +46,7 @@ namespace consultas_gis.api.Data
                 AND f.TIPO_CUOTA IN ('40','41','42','43','44') 
                 --AND fd.TIPO_ITEM IN ('CICITEM2','CICIRETE')
                 AND DOCUMENTO IS NOT NULL 
-                --AND CLAVE_BIEN in ('30717316408') --,''
+                --AND CLAVE_BIEN in ('30707419705','30623893096','30708757175','30518506230') 
                 --AND DOCUMENTO <> ''
                 --Exenciones--and pb.ID_BIEN not in (select ID_BIEN from RT_EXENCIONES where TIPO_EXENCION in ('CICI','CICI0007','CICI0008','CICI0012'))
                 group by f.NRO_INTERNO,CLAVE_BIEN,pb.ID_BIEN,APELLIDO_NOMBRE,DBO.CICI_CATEGORIA_VIGENTE(pb.ID_BIEN),f.ANO_CUOTA,f.NRO_CUOTA,ESTADO_DEUDA,FECHA_VENCIMIENTO1
@@ -68,21 +71,24 @@ namespace consultas_gis.api.Data
         {
 
             var sql = @"
-                          SELECT top 50 f.NRO_INTERNO,CLAVE_BIEN as CUIT,p.APELLIDO_NOMBRE
-                --,DBO.CICI_CATEGORIA_VIGENTE(pb.ID_BIEN) as CATEGORIA
-                ,case when DBO.CICI_CATEGORIA_VIGENTE(pb.ID_BIEN)='Gran Contribuyente' then 'GC' else DBO.CICI_CATEGORIA_VIGENTE(pb.ID_BIEN) 
-                end as categoria
+                  SELECT top 50 f.NRO_INTERNO,CLAVE_BIEN as CUIT,p.APELLIDO_NOMBRE
+                ,case when DBO.CICI_CATEGORIA_VIGENTE(pb.ID_BIEN)='Gran Contribuyente' then 'GC' else DBO.CICI_CATEGORIA_VIGENTE(pb.ID_BIEN) end as CATEGORIA
                 ,f.ANO_CUOTA, f.NRO_CUOTA
-                ,sum(case when TIPO_ITEM='CICITEM2' then CAPITAL_ITEM end) as tributo
-                ,isnull(sum(case when TIPO_ITEM='CICIRETE' then CAPITAL_ITEM*-1 end),0) as Retenciones
+                ,sum(case when TIPO_ITEM='CICITEM2' then CAPITAL_ITEM end) as TRIBUTO
+                ,isnull(sum(case when TIPO_ITEM='CICIRETE' then CAPITAL_ITEM*-1 end),0) as RETENCIONES
                 --else sum(CAPITAL_ITEM) end as SALDO
-                ,CASE 
-                WHEN ESTADO_DEUDA IN ('PT','FP') THEN 'PAGADO'
-                WHEN sum(case when TIPO_ITEM='CICITEM2' then CAPITAL_ITEM end)-isnull(sum(case when TIPO_ITEM='CICIRETE' then CAPITAL_ITEM*-1 end),0)=0 THEN 'SALDADO'
-                WHEN ESTADO_DEUDA = 'LI' THEN 'DEUDA' 
-                WHEN ESTADO_DEUDA = 'FI' THEN 'EN PLAN DE PAGO' 
-                    ELSE ESTADO_DEUDA
+                ,CASE WHEN ESTADO_DEUDA IN ('PT','FP') THEN 'PAGADO'
+	                  WHEN sum(case when TIPO_ITEM='CICITEM2' then CAPITAL_ITEM end)-isnull(sum(case when TIPO_ITEM='CICIRETE' then CAPITAL_ITEM*-1 end),0)=0 THEN 'SALDADO'
+	                  WHEN ESTADO_DEUDA = 'LI' THEN 'DEUDA' 
+	                  WHEN ESTADO_DEUDA = 'FI' THEN 'EN PLAN DE PAGO' 
+                      ELSE ESTADO_DEUDA
                 END AS ESTADO
+                ,CASE WHEN ESTADO_DEUDA IN ('PT','FP') THEN 0
+	                  WHEN sum(case when TIPO_ITEM='CICITEM2' then CAPITAL_ITEM end)-isnull(sum(case when TIPO_ITEM='CICIRETE' then CAPITAL_ITEM*-1 end),0)=0 THEN 0
+	                  WHEN ESTADO_DEUDA = 'LI' THEN sum(case when TIPO_ITEM='CICITEM2' then CAPITAL_ITEM end)-isnull(sum(case when TIPO_ITEM='CICIRETE' then CAPITAL_ITEM*-1 end),0)
+	                  --WHEN ESTADO_DEUDA = 'FI' THEN 0
+                      ELSE 0
+                END AS DEUDA
                 --,cast(FECHA_VENCIMIENTO1 as date) as FEC_VTO
                 FROM RT_FACTURAS f
                 JOIN RT_PADRON_BASE pb ON pb.ID_BIEN = f.ID_BIEN and pb.TIPO_BIEN='CICI'
@@ -97,12 +103,12 @@ namespace consultas_gis.api.Data
                 AND f.TIPO_CUOTA IN ('40','41','42','43','44') 
                 --AND fd.TIPO_ITEM IN ('CICITEM2','CICIRETE')
                 AND DOCUMENTO IS NOT NULL 
-                --AND CLAVE_BIEN in ('30717316408') --,''
+                --AND CLAVE_BIEN in ('30707419705','30623893096','30708757175','30518506230') 
                 --AND DOCUMENTO <> ''
                 --Exenciones--and pb.ID_BIEN not in (select ID_BIEN from RT_EXENCIONES where TIPO_EXENCION in ('CICI','CICI0007','CICI0008','CICI0012'))
                 group by f.NRO_INTERNO,CLAVE_BIEN,pb.ID_BIEN,APELLIDO_NOMBRE,DBO.CICI_CATEGORIA_VIGENTE(pb.ID_BIEN),f.ANO_CUOTA,f.NRO_CUOTA,ESTADO_DEUDA,FECHA_VENCIMIENTO1
                 --having sum(case when TIPO_ITEM='CICITEM2' then CAPITAL_ITEM end)-isnull(sum(case when TIPO_ITEM='CICIRETE' then CAPITAL_ITEM*-1 end),0)>10
-                ORDER BY CLAVE_BIEN, f.ANO_CUOTA, f.NRO_CUOTA   
+                ORDER BY CLAVE_BIEN, f.ANO_CUOTA, f.NRO_CUOTA           
                 ";
 
 

@@ -42,8 +42,8 @@ namespace consultas_gis.api.Controllers
         {
             var repo = new Repositorio();
 
-
-            return Ok($"ambientes deploy {new DateTime()}");
+            var fechaHoy = DateOnly.FromDateTime(DateTime.Now);
+            return Ok($"ambientes deploy {fechaHoy}");
         }
 
     }
