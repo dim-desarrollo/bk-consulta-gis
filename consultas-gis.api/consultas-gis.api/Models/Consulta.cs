@@ -4,7 +4,7 @@ namespace consultas_gis.api.Models
 {
     public class Consulta
     {
-        [JsonPropertyName("ACTIV_PRINCIPAL")]
+        
         private string _activPrincipal = string.Empty;
         
 
@@ -37,6 +37,8 @@ namespace consultas_gis.api.Models
 
         [JsonPropertyName("DEUDA")]
         public float DEUDA { get; set; }
+
+        [JsonPropertyName("ACTIV_PRINCIPAL")]
         public string ACTIV_PRINCIPAL
         {
             get => _activPrincipal;
