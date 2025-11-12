@@ -8,9 +8,7 @@ namespace consultas_gis.api.Models
         private string _activPrincipal = string.Empty;
         
 
-                [JsonPropertyName("NRO_INTERNO")]
-        public string NRO_INTERNO { get; set; } = string.Empty;
-
+        
         [JsonPropertyName("CUIT")]
         public string CUIT { get; set; } = string.Empty;
 
