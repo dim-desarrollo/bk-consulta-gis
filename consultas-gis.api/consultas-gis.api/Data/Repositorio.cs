@@ -10,7 +10,7 @@ namespace consultas_gis.api.Data
 
 
         string coneccion =  Environment.GetEnvironmentVariable("CONECCION_DB");
-        //string connectionString = "Server=172.20.254.236;Database=PROGRAM;User Id=fbono;Password=fbono;TrustServerCertificate=True;";
+       
 
 
         public List<Consulta> ConsultaPadron()
