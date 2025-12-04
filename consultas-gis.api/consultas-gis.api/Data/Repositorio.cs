@@ -1,13 +1,16 @@
 ﻿using consultas_gis.api.Models;
 using Dapper;
 using Microsoft.Data.SqlClient;
+using System;
 
 namespace consultas_gis.api.Data
 {
     public class Repositorio
     {
 
-        string connectionString = "Server=172.20.254.236;Database=PROGRAM;User Id=fbono;Password=fbono;TrustServerCertificate=True;";
+
+        string coneccion =  Environment.GetEnvironmentVariable("CONECCION_DB");
+        //string connectionString = "Server=172.20.254.236;Database=PROGRAM;User Id=fbono;Password=fbono;TrustServerCertificate=True;";
 
 
         public List<Consulta> ConsultaPadron()
@@ -61,7 +64,7 @@ namespace consultas_gis.api.Data
                 ";
 
 
-            using var connection = new SqlConnection(connectionString);
+            using var connection = new SqlConnection(coneccion);
                 var consultas =  connection.Query<Consulta>(sql,
                 commandTimeout: 300,
                 buffered: false).ToList();
@@ -123,7 +126,7 @@ namespace consultas_gis.api.Data
                 ";
 
 
-            using var connection = new SqlConnection(connectionString);
+            using var connection = new SqlConnection(coneccion);
             var consultas = connection.Query<Consulta>(sql,
             commandTimeout: 300,
             buffered: false).ToList();
