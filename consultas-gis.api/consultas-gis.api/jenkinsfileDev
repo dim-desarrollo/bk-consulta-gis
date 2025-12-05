@@ -18,7 +18,7 @@ pipeline {
 
     environment {
         IDENTIFICADOR_IMAGEN = 'bk-tableros'
-        CARPETA_APLICACION   = './'
+        CARPETA_APLICACION   = 'consultas-gis.api/consultas-gis.api'
         HORA_DESPLIEGUE      = ""
     }
 
