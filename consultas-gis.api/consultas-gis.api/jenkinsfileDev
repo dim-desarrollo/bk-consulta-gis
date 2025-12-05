@@ -2,14 +2,8 @@
     Jenkinsfile.build
     ------------------------------------------------------
     Comportamiento:
-    - Si NO hay imagen previa :latest:
-        * Se crea solo IDENTIFICADOR_IMAGEN:latest
-    - Si hay imagen previa :latest:
-        * Se construye nueva imagen con tag temporal
-        * Si la nueva imagen es IGUAL a la previa (mismo ID) -> error
-        * Si es distinta:
-            - La que era :latest se versiona a v0.0.X (incrementando X)
-            - La nueva imagen pasa a :latest
+    - Construye la imagen Docker
+    - Siempre etiqueta como :latest (sobrescribe si existe)
 */
 
 def RAMA_PARA_CLONAR
@@ -26,7 +20,6 @@ pipeline {
         IDENTIFICADOR_IMAGEN = 'bk-tableros'
         CARPETA_APLICACION   = './'
         HORA_DESPLIEGUE      = ""
-        //GITHUB_MONOLITO_URL  = "https://github.com/dim-desarrollo/bk-Identificacion-Insp"
     }
 
     stages {
@@ -60,89 +53,27 @@ pipeline {
             }
         }
 
-        stage('Build + control de cambios + versionado') {
+        stage('Build de imagen Docker') {
             steps {
                 script {
                     dir("${CARPETA_APLICACION}") {
 
-                        // 1) Verificar Dockerfile
+                        // Verificar que existe Dockerfile
                         if (!fileExists("Dockerfile")) {
                             error "ERROR: No se encontró un Dockerfile en el directorio del proyecto."
                         }
 
-                        // 2) Buscar imagen previa con tag :latest (si existe)
-                        def previousImageId = sh(
-                            script: "docker images -q ${IDENTIFICADOR_IMAGEN}:latest || true",
+                        // Construir imagen directamente con tag :latest
+                        echo "Construyendo imagen: ${IDENTIFICADOR_IMAGEN}:latest"
+                        sh "docker build -t ${IDENTIFICADOR_IMAGEN}:latest ."
+
+                        // Obtener ID de la imagen construida
+                        def imageId = sh(
+                            script: "docker images -q ${IDENTIFICADOR_IMAGEN}:latest",
                             returnStdout: true
                         ).trim()
 
-                        if (previousImageId) {
-                            echo "Imagen previa encontrada con tag :latest -> ID: ${previousImageId}"
-                        } else {
-                            echo "No existe imagen previa ${IDENTIFICADOR_IMAGEN}:latest. Este puede ser el primer build."
-                        }
-
-                        // 3) Build de la nueva imagen con tag TEMPORAL
-                        def tempTag = "${IDENTIFICADOR_IMAGEN}:temp-${env.BUILD_NUMBER}"
-                        echo "Construyendo nueva imagen temporal: ${tempTag}"
-                        sh "docker build -t ${tempTag} ."
-
-                        // 4) Obtener ID de la nueva imagen
-                        def newImageId = sh(
-                            script: "docker images -q ${tempTag}",
-                            returnStdout: true
-                        ).trim()
-
-                        echo "ID de la nueva imagen: ${newImageId}"
-
-                        // 5) Si había imagen previa y el ID es el mismo -> ERROR (no hubo cambios reales)
-                        if (previousImageId && previousImageId == newImageId) {
-                            echo "La nueva imagen es IDENTICA a la anterior (mismo ID)."
-                            // Limpiar tag temporal
-                            sh "docker rmi ${tempTag}"
-                            error "No se detectaron cambios en el código/Dockerfile. No se genera nueva versión."
-                        }
-
-                        // 6) Si hay imagen previa y ES DISTINTA -> versionar la que era latest
-                        if (previousImageId && previousImageId != newImageId) {
-                            // Obtener todos los tags de versión existentes (vX.Y.Z)
-                            def versionTagsOutput = sh(
-                                script: """
-                                    docker images ${IDENTIFICADOR_IMAGEN} --format '{{.Tag}}' \\
-                                    | grep '^v' || true
-                                """,
-                                returnStdout: true
-                            ).trim()
-
-                            String nextVersionTag = "v0.0.1"
-
-                            if (versionTagsOutput) {
-                                def tags = versionTagsOutput.split("\\s+") as List<String>
-                                int maxPatch = 0
-
-                                tags.each { t ->
-                                    def matcher = (t =~ ~/^v\\d+\\.\\d+\\.(\\d+)$/)
-                                    if (matcher.matches()) {
-                                        int patch = matcher[0][1].toInteger()
-                                        if (patch > maxPatch) {
-                                            maxPatch = patch
-                                        }
-                                    }
-                                }
-
-                                nextVersionTag = String.format("v0.0.%d", maxPatch + 1)
-                            }
-
-                            echo "Versionando imagen previa (${previousImageId}) como ${IDENTIFICADOR_IMAGEN}:${nextVersionTag}"
-                            sh "docker tag ${IDENTIFICADOR_IMAGEN}:latest ${IDENTIFICADOR_IMAGEN}:${nextVersionTag}"
-                        }
-
-                        // 7) La nueva imagen temporal pasa a ser :latest
-                        echo "Promocionando nueva imagen a :latest"
-                        sh "docker tag ${tempTag} ${IDENTIFICADOR_IMAGEN}:latest"
-
-                        // 8) Limpiar tag temporal
-                        sh "docker rmi ${tempTag}"
+                        echo "Imagen construida exitosamente - ID: ${imageId}"
                     }
                 }
             }
@@ -150,9 +81,8 @@ pipeline {
 
         stage('Fin del proceso') {
             steps {
-                echo "Build finalizado."
-                echo "Imagen más reciente: ${IDENTIFICADOR_IMAGEN}:latest"
-                echo "Si existía una imagen previa distinta, fue versionada como ${IDENTIFICADOR_IMAGEN}:v0.0.X"
+                echo "Build finalizado exitosamente."
+                echo "Imagen disponible: ${IDENTIFICADOR_IMAGEN}:latest"
             }
         }
     }
