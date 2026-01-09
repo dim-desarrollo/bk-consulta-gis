@@ -46,7 +46,7 @@ namespace consultas_gis.api.Data
             left join RT_COMERCIO_RUBROS_ANO cr on cr.ID_COMERCIO_INDUSTRIA=pb.ID_BIEN and FECHA_CESE is null and cr.PRINCIPAL=1
             left join RT_COMERCIO_LIQUI_RUBROS clr on clr.CODIGO_RUBRO=cr.CODIGO_RUBRO
             WHERE ACTIVO = 1 
-            AND f.ANO_CUOTA = 2025  --and f.NRO_CUOTA<=9
+            AND f.ANO_CUOTA <= 2025  --and f.NRO_CUOTA<=9
             AND ESTADO_DEUDA <> 'CA'
             --AND ESTADO_DEUDA = 'LI'
             AND f.TIPO_CUOTA IN ('40','41','42','43','44') 
