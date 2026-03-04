@@ -63,7 +63,7 @@ namespace consultas_gis.api.Data
 
             using var connection = new SqlConnection(connectionString);
                 var consultas =  connection.Query<Consulta>(sql,
-                commandTimeout: 300,
+                commandTimeout: 400,
                 buffered: false).ToList();
 
                 return consultas;
